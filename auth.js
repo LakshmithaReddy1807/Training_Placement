@@ -5,12 +5,17 @@ const pool = require('./db');
 
 const router = express.Router();
 
+const VALID_ROLES = ['student', 'officer'];
+
 // REGISTER
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
     if (!name || !email || !password || !role)
       return res.status(400).json({ error: 'All fields are required' });
+
+    if (!VALID_ROLES.includes(role))
+      return res.status(400).json({ error: `Role must be one of: ${VALID_ROLES.join(', ')}` });
 
     const hash = await bcrypt.hash(password, 10);          // scramble the password
     const result = await pool.query(

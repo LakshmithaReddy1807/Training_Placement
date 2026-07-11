@@ -92,32 +92,26 @@ CREATE INDEX idx_notifications_user   ON notifications(user_id);
 
 
 -- ============================================================
---  SEED DATA — a few rows so you can test immediately
+--  SEED DATA
+--  Users are intentionally NOT seeded here: password_hash needs
+--  a real bcrypt hash, and hardcoding one in SQL is easy to get
+--  out of sync with whatever bcrypt salt rounds the app uses.
+--  Register real users through POST /auth/register instead
+--  (see test.js) — that guarantees the hash always matches
+--  what the login route expects.
+--
+--  Companies have no password concerns, so they're seeded here
+--  for convenience.
 -- ============================================================
-INSERT INTO users (name, email, password_hash, role) VALUES
-    ('Ravi Kumar',  'ravi@college.edu',  'hashed_pw_1', 'student'),
-    ('Priya Sharma','priya@college.edu', 'hashed_pw_2', 'student'),
-    ('Mr. Khan',    'khan@college.edu',  'hashed_pw_3', 'officer');
-
-INSERT INTO student_profiles (user_id, cgpa, branch, backlogs) VALUES
-    (1, 8.20, 'CSE', 0),
-    (2, 6.40, 'IT',  1);
-
 INSERT INTO companies
     (name, role_offered, package, eligibility_type, min_cgpa, allowed_branches, quota_size, visit_date)
 VALUES
     ('Infosys', 'Systems Engineer', 6.00, 'rule',  7.00, 'CSE,IT', NULL, '2026-08-15'),
     ('TCS',     'Graduate Trainee', 5.00, 'quota', 0.00, 'CSE,IT,ECE', 100, '2026-09-01');
 
--- Ravi (CGPA 8.2, CSE) is eligible for Infosys and applies
-INSERT INTO applications (student_id, company_id, status) VALUES
-    (1, 1, 'applied');
-
-INSERT INTO notifications (user_id, message) VALUES
-    (1, 'Welcome! Infosys drive is now open.');
-
 -- ============================================================
 --  SAMPLE QUERIES — try these to see the model in action
+--  (run after you've registered some real users via the API)
 -- ============================================================
 
 -- Who applied to which company, and current status?
